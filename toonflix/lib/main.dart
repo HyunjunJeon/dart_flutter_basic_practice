@@ -3,10 +3,58 @@ import 'package:toonflix/widgets/button.dart';
 import 'package:toonflix/widgets/curreny_card.dart';
 
 void main() {
-  runApp(App());
+  // runApp(MyStatelessApp());
+  runApp(const MyStatefulApp());
 }
 
-class App extends StatelessWidget {
+class MyStatefulApp extends StatefulWidget {
+  const MyStatefulApp({super.key});
+
+  @override
+  State<MyStatefulApp> createState() => _MyStatefulAppState();
+}
+
+class _MyStatefulAppState extends State<MyStatefulApp> {
+  List<int> numbers = [];
+
+  void onClicked() {
+    // 이 함수를 호출해야만 아래의 build 메서드가 다시 수행되서 변경된 데이터가 바로 반영됌
+    // 근데 데이터의 변경 사항을 UI에 바로 반영하고 싶지 않을 때도 있음 =>
+    setState(() {
+      numbers.add(numbers.length);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: const Color(0xFFF4EDDB),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Click Count",
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+              ),
+              for (var n in numbers) Text('$n'),
+              IconButton(
+                onPressed: onClicked,
+                icon: const Icon(Icons.add_box_rounded),
+                iconSize: 50,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MyStatelessApp extends StatelessWidget {
   // Core Widget 중 하나인 StatelessWidget
   @override
   Widget build(BuildContext context) {
