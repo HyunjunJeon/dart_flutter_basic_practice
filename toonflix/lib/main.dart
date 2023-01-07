@@ -15,40 +15,79 @@ class MyStatefulApp extends StatefulWidget {
 }
 
 class _MyStatefulAppState extends State<MyStatefulApp> {
-  List<int> numbers = [];
+  bool showTitle = true;
 
-  void onClicked() {
-    // 이 함수를 호출해야만 아래의 build 메서드가 다시 수행되서 변경된 데이터가 바로 반영됌
-    // 근데 데이터의 변경 사항을 UI에 바로 반영하고 싶지 않을 때도 있음 =>
+  void toggleTitle() {
     setState(() {
-      numbers.add(numbers.length);
+      showTitle = !showTitle;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      ),
       home: Scaffold(
         backgroundColor: const Color(0xFFF4EDDB),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                "Click Count",
-                style: TextStyle(
-                  fontSize: 30,
-                ),
-              ),
-              for (var n in numbers) Text('$n'),
+              showTitle ? const MyLargeTitle() : const Text("Nothing"),
               IconButton(
-                onPressed: onClicked,
-                icon: const Icon(Icons.add_box_rounded),
-                iconSize: 50,
-              )
+                  onPressed: toggleTitle,
+                  icon: const Icon(Icons.remove_red_eye))
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class MyLargeTitle extends StatefulWidget {
+  const MyLargeTitle({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<MyLargeTitle> createState() => _MyLargeTitleState();
+}
+
+class _MyLargeTitleState extends State<MyLargeTitle> {
+  int count = 0;
+
+  @override
+  void initState() {
+    // 부모 요소에 의존하는 데이터의 상태를 초기화하기 위함
+    // API 로 부터 정기적으로 업데이트를 수신하고 싶은 경우
+    // 항상 build 메서드 전에 실행됌!!
+    super.initState();
+    print("initState");
+  }
+
+  // 위젯이 스크린에서 제거될 때 호출되는 메서드
+  @override
+  void dispose() {
+    // API 업데이트나 이벤트 리스너로부터의 구독을 취소, Form 리스너로에게서 벗어나고 싶을때
+    super.dispose();
+    print("dispose");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("Build!!");
+    return Text(
+      "My Large Title",
+      style: TextStyle(
+        fontSize: 30,
+        color: Theme.of(context).textTheme.titleLarge!.color,
       ),
     );
   }
